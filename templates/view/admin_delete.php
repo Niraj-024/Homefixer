@@ -46,8 +46,8 @@ if(isset($_POST['deleteuserbtn'])){
 
 <!-- for service deletion -->
 <?php
-if(isset($_GET['id'])){
-    $id = $_GET['id'];
+if(isset($_POST['deleteservicebtn'])){
+    $id = $_POST['s_id'];
     $query = "DELETE from service where s_id = '$id' ;" ;
     if($conn->query($query)==false){
         die("Failed delete".$conn->error);
