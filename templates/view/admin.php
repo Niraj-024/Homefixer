@@ -29,7 +29,8 @@
         if(!$result){
             die("query failed".$conn->error);
         }else{
-            $count = 1;
+            if(mysqli_num_rows($result)>0){
+                $count = 1;
             while($row = mysqli_fetch_assoc($result)){
         ?>
         <tr>
@@ -44,6 +45,10 @@
             </td>
         </tr>
         <?php
+            }
+            }else{
+                echo '<h6> ***No records found*** </h6>';
+
             }
         } 
         ?>

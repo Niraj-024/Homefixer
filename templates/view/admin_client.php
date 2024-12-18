@@ -33,8 +33,9 @@ if($_SESSION['role'] != 'client' && $_SESSION['role'] != 'spr'):
         if(!$result){
             die("query failed".$conn->error);
         }else{
-            $count = 1;
-            while($row = mysqli_fetch_assoc($result)){
+            if(mysqli_num_rows($result)>0){
+                $count =1;
+                while($row = mysqli_fetch_assoc($result)){
         ?>
                 <tr class="table">
                     <td><?php echo $count++; ?> </td>
@@ -44,11 +45,15 @@ if($_SESSION['role'] != 'client' && $_SESSION['role'] != 'spr'):
                     <td><?php echo $row['created']; ?></td>
                     <td class="d-flex justify-content-around">
                         <a href="admin_update.php?name=<?php echo $row['uname'];?>&role=client" class="btn btn-primary">Update</a>
-                        <a href="admin_delete.php?name=<?php echo $row['uname'];?>&role=client" class="btn btn-danger" >Delete</a>
+                        <button type="button" value="<?php echo $row['uname']; ?>" class="btn btn-danger delete-btn">Delete</button>
+
                     </td>
                 </tr>
 
         <?php
+                }
+            }else{
+                echo '<h6> ***NO records found*** </h6>';
             }
         }
             
@@ -121,8 +126,45 @@ if(isset($_GET['updatemsg'])){
 </form>
 
 
+<!-- Confirm delete modal here -->
+<form action="admin_delete.php?&role=client" method="POST">
+<div class="modal fade" id="deletemodal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content mt-0">
+      <div class="modal-header mt-0">
+        <h1 class="modal-title fs-5" id="staticBackdropLabel">Confirm Delete?</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body">
+        <input type="hidden" name="uname" class="delete_uname">
+        <p1>Are you sure, you want to delete this record?</p1>
+      </div>
+
+     <div class="modal-footer">
+        <button type="button" class="btn btn-danger float-start" data-bs-dismiss="modal">Cancel</button>
+        <input type="submit" class="btn btn-success" name="deleteuserbtn" value="Delete">
+      </div>
+    </div>
+  </div>
+</div>
+</form>
+
+<?php     include('admin_footer.php');?>
+
+<script>
+    $(document).ready(function () {
+        $(".delete-btn").click(function(e){
+            e.preventDefault();
+            var uname = $(this).val();
+            console.log(uname);
+            $(".delete_uname").val(uname);
+            $("#deletemodal").modal('show');
+        });
+    });
+</script>
+
 <?php 
-    include('admin_footer.php');
 elseif($_SESSION['role'] == 'spr'):
     header("location: service provider.php");
 elseif($_SESSION['role'] == 'client'):
