@@ -6,23 +6,40 @@ include("../controller/db_conn.php");
 
 
 <?php
-if(isset($_GET['name'])){
-    $dname = $_GET['name'];
+// if(isset($_GET['name'])){
+//     $dname = $_GET['name'];
+//     $role = $_GET['role'];
+// $query = "DELETE from user where uname = '$dname' ;" ;
+// $result = mysqli_query($conn , $query);
+
+// if(!$result){
+//     die('Delete failed'. $conn-> error);
+// }else{
+//     if($role == 'admin')
+//     header('location:admin.php?deletemsg=***Record deleted successfully***');
+//     elseif($role == 'client')
+//     header(('location:admin_client.php?deletemsg=***Record deleted successfully***'));
+//     elseif($role == 'spr')
+//     header(('location:admin_spr.php?deletemsg=***Record deleted successfully***'));
+
+// } 
+// }
+if(isset($_POST['deleteuserbtn'])){
+    $uname= $_POST['uname'];
     $role = $_GET['role'];
-$query = "DELETE from user where uname = '$dname' ;" ;
-$result = mysqli_query($conn , $query);
+    $query = "DELETE from user where uname = '$uname' ;" ;
 
-if(!$result){
-    die('Delete failed'. $conn-> error);
-}else{
-    if($role == 'admin')
-    header('location:admin.php?deletemsg=***Record deleted successfully***');
-    elseif($role == 'client')
-    header(('location:admin_client.php?deletemsg=***Record deleted successfully***'));
-    elseif($role == 'spr')
-    header(('location:admin_spr.php?deletemsg=***Record deleted successfully***'));
-
-} 
+    $result = mysqli_query($conn , $query);
+    if(!$result){
+        die('Delete failed'. $conn-> error);
+        }else{
+        if($role == 'admin')
+        header('location:admin.php?deletemsg=***Record deleted successfully***');
+        elseif($role == 'client')
+        header(('location:admin_client.php?deletemsg=***Record deleted successfully***'));
+        elseif($role == 'spr')
+        header(('location:admin_spr.php?deletemsg=***Record deleted successfully***'));
+    }        
 }
 ?>
 

@@ -13,7 +13,7 @@ include ('../controller/session.php');
 </head>
 <body>
     <div class="sidebar">
-        <h2>Welcome, <?php echo $_SESSION['uname'] ;?></h2>
+        <h2>Welcome, <?php echo $_SESSION['uname'] ;?></h2><hr>
         <div class="menu-item">
             <i class="fas fa-user"></i>
             <span><a href="admin.php">Admins</a></span>
