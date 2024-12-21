@@ -23,7 +23,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         $_SESSION['role'] = $role;
         //role based redirect
         if($role =='spr'){header("location:service provider.php");}
-        if($role =='client'){header("location:user.php");}
+        if($role =='client'){header("location:client_profile.php");}
         if($role =='admin'){header("location:admin.php");}
       }else{
         $errmsg = "Invalid , try again !";
