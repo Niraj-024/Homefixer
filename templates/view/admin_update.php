@@ -73,7 +73,7 @@ if(isset($_POST['adminupdate'])){
             $role = $_GET['role'];
 
             if($role == 'admin')
-            header('location:admin.php?updatemsg=***Recoed updated successfully***');
+            header('location:admin.php?updatemsg=***Record updated successfully***');
             elseif($role == 'client')
             header(('location:admin_client.php?updatemsg=***Record updated successfully***'));
             elseif($role == 'spr')
@@ -146,9 +146,9 @@ if(isset($_POST['serviceupdate'])){
             // Use the old file if no new file is uploaded
             $filename = $filename_old;
         }
-
+        $id = $_GET['id'];
         // Update the service in the database
-        $query = "UPDATE service SET s_name = '$name', caption = '$caption', image = '$filename' WHERE s_id = '$id';";
+        $query = "UPDATE service SET s_name = '$name', caption = '$caption', image = '$filename' WHERE s_id = '$id' ;";
         $result = mysqli_query($conn, $query);
 
         if (!$result) {

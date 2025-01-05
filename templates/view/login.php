@@ -8,23 +8,22 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
   include('../controller/db_conn.php');
   $uname = $_POST["uname"];
   $pass = $_POST["pass"];
-  $sql = "SELECT * FROM user WHERE uname = '$uname'; ";   
+  $sql = "SELECT * FROM user WHERE uname = '$uname' AND password='$pass'; ";   
   $result = $conn->query($sql);
-
   if($result->num_rows == 1){ //find for user
     while($row = mysqli_fetch_assoc($result)){
       if($pass == $row['password']){
-        $login = true;
-        session_start();
-        $_SESSION['loggedin'] = true;
-        $_SESSION['uname'] = $uname;
-  
-        $role = $row['role'];//fetch role
-        $_SESSION['role'] = $role;
-        //role based redirect
-        if($role =='spr'){header("location:service provider.php");}
-        if($role =='client'){header("location:client_profile.php");}
-        if($role =='admin'){header("location:admin.php");}
+          $login = true;
+          session_start();
+          $_SESSION['loggedin'] = true;
+          $_SESSION['uname'] = $uname;
+          $_SESSION['id'] = $row['u_id'];
+          $role = $row['role'];//fetch role
+          $_SESSION['role'] = $role;
+          //role based redirect
+          if($role =='spr'){header("location:spr_profile.php");}
+          if($role =='client'){header("location:client_profile.php");}
+          if($role =='admin'){header("location:admin.php");}
       }else{
         $errmsg = "Invalid , try again !";
       }

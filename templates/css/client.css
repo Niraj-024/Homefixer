@@ -54,4 +54,22 @@ a.sidebar-link:hover{
     height: 250px;
     width: 250px;
 }
+/* for update form */
+.crud-section {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    margin: 20px;
+}
+.crud-section h2{
+    text-align: center;
+    margin-bottom: 10px;
+    background: #2c3e50;
+    color: white;
+    padding: 10px;
+    border-radius: 20px;
+    font-size: large;
+} 
+/* update form ends*/
 

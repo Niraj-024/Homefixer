@@ -38,6 +38,7 @@ if($_SESSION['role'] != 'client' && $_SESSION['role'] != 'spr'):
             die("query failed".$conn->error);
         }else{
             if(mysqli_num_rows($result)>0){
+              $count =1;
                 while($row = mysqli_fetch_assoc($result)){
         ?>
                 <tr>
