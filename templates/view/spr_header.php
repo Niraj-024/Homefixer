@@ -13,31 +13,31 @@
     <!-- sidebar-->
     <aside id="sidebar">
         <div class="logo">
-            <a href="client_profile.php"><img src="../css/img/logos.png" alt="Homefixer" height="60px" width="240px"></a>
+            <a href="spr_profile.php"><img src="../css/img/logos.png" alt="Homefixer" height="60px" width="240px"></a>
         </div><hr class="mt-0">
         <!-- sidebar nav -->
         <ul class="sidebar-nav p-0">
             <li class="sidebar-items">
-                <a href="client_profile.php" class="sidebar-link">
+                <a href="spr_profile.php" class="sidebar-link">
                     <i class="fas fa-user"></i>
                     <span>Profile</span>
                 </a>
             </li>
             
             <li class="sidebar-items">
-                <a href="client_services.php" class="sidebar-link">
+                <a href="spr_requests.php" class="sidebar-link">
                 <i class="fas fa-tasks"></i>
-                <span>Services</span>
+                <span>Service Requests</span>
                 </a>
             </li>
             <li class="sidebar-items">
-                <a href="client_booknew.php" class="sidebar-link">
+                <a href="spr_book.php" class="sidebar-link">
                 <i class="fa-solid fa-list"></i>
                 <span>My Bookings</span>
                 </a>
             </li>
             <li class="sidebar-items">
-                <a href="client_reviews.php" class="sidebar-link">
+                <a href="spr_reviews.php" class="sidebar-link">
                 <i class="fa-solid fa-star"></i>
                 <span>My Reviews</span>
                 </a>

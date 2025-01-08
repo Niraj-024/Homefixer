@@ -1,6 +1,6 @@
 <?php
     include ('../controller/db_conn.php');
-    include('client_header.php');
+    include('spr_header.php');
 ?> 
 
 <?php
@@ -19,7 +19,7 @@ if(isset($_GET['id'])){
 ?>
 <div class="crud-section">
 
-    <form action="client_update.php?id=<?php echo $id;?>" method="POST" enctype="multipart/form-data">
+    <form action="spr_update.php?id=<?php echo $id;?>" method="POST" enctype="multipart/form-data">
         
         <h2 class="bg-secondary">Edit your profile</h2>
         
@@ -45,7 +45,7 @@ if(isset($_GET['id'])){
      <input type="hidden" name="oldfile" value="<?php echo $row['image'];?>">
     </div>
     <div class="form-group d-flex flex-row-reverse ">
-        <input type="submit" class="btn btn-success " name="client_update" value="Update">
+        <input type="submit" class="btn btn-success " name="spr_update" value="Update">
     </div>
     
 </form>
@@ -53,7 +53,7 @@ if(isset($_GET['id'])){
 
 <?php
 // FOR updating
-if(isset($_POST['client_update'])){
+if(isset($_POST['spr_update'])){
     $name =$_POST['sname'];
     $address =$_POST['address'];
     $email =$_POST['email'];
@@ -79,13 +79,13 @@ if(isset($_POST['client_update'])){
                 if (!file_exists($serviceDir . $filename)) {
                     move_uploaded_file($filetmp, $serviceDir . $filename);
                 } else {
-                    header('location:client_profile.php?err=***File already exists***');
+                    header('location:spr_profile.php?err=***File already exists***');
                     exit();
                 }
             }
     
             // Redirect with success message
-            header('location:client_profile.php?updatemsg=***Record Updated Successfully***');
+            header('location:spr_profile.php?updatemsg=***Record Updated Successfully***');
             exit();
         }
     }

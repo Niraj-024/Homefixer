@@ -18,7 +18,7 @@ if($_SESSION['role'] != 'admin' && $_SESSION['role'] != 'spr'):
                     <div class="card-body d-flex flex-column">
                         <h5 class="card-title"><?php echo ($srow['s_name']); ?></h5>
                         <p class="card-text"><?php echo ($srow['caption']); ?></p>
-                        <a href="#" class="btn btn-primary mt-auto">Book Now</a>
+                        <a href="client_booknew.php" class="btn btn-primary mt-auto">Book Now</a>
                     </div>
                 </div>
             </div>

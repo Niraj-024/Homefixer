@@ -27,8 +27,10 @@ $result = mysqli_query($conn , $query);
         
 ?>
 <div class="profile container overflow-auto">
-    <span class="bg-success"><?php if(isset($_GET['updatemsg'])){echo $_GET['updatemsg'];}; ?></span>
+    <!-- message section -->
+    <span class="bg-success text-light"><?php if(isset($_GET['updatemsg'])){echo $_GET['updatemsg'];}; ?></span>
     <span class="bg-danger"><?php if(isset($_GET['err'])){echo $_GET['err'];}; ?></span>
+   
     <!-- Header Section -->
     <div class="bg-white p-4 rounded shadow-sm   text-center">
         <img src="/1HF/db_images/<?php echo $row['image']; ?>" alt="Profile picture" class="rounded-circle mb-3" style="width: 160px; height: 160px;">
