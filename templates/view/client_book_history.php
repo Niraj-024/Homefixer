@@ -1,6 +1,16 @@
 <?php include ('../controller/session.php');
+include('../controller/db_conn.php');
 if($_SESSION['role'] != 'admin' && $_SESSION['role'] != 'spr'):
     include('client_header.php');
+    $id = $_SESSION['id'];
+
+    $sql ="SELECT b.*, u.uname 
+    FROM bookings b
+    LEFT JOIN user u ON b.provider_id = u.u_id
+    WHERE b.user_id = '15' AND (b.status = 'completed' OR b.status = 'cancelled')
+    ORDER BY b.booking_date DESC;";
+    
+    $result = $conn->query($sql);
 ?> 
 <div class="container mt-3">
     <ul class="nav nav-pills">
@@ -30,23 +40,34 @@ if($_SESSION['role'] != 'admin' && $_SESSION['role'] != 'spr'):
             </tr>
         </thead>
         <tbody>
-            <!-- Example Row -->
+        <?php 
+            if ($result->num_rows > 0) {
+                $sn = 0;
+                while ($row = $result->fetch_assoc()) {
+                    $sn++;
+            ?>
             <tr>
-                <td>1</td>
-                <td>Electrical</td>
-                <td>2025-01-05 09:00</td>
-                <td>789 Maple Street</td>
-                <td>Jane Doe (1234567890)</td>
-                <td><span class="badge bg-success">Completed</span></td>
+                <td><?php echo $sn; ?></td>
+                <td><?php echo $row['service_type']; ?></td>
+                <td><?php echo $row['booking_date']; ?></td>
+                <td><?php echo $row['service_location']; ?></td>
+                <td><?php echo $row['uname'] ? $row['uname'] : 'N/A'; ?></td>
+                <td>
+                    <?php 
+                        if ($row['status'] == 'completed') {
+                            echo "<span class='badge bg-success'>Completed</span>";
+                        } elseif ($row['status'] == 'cancelled') {
+                            echo "<span class='badge bg-danger'>Cancelled</span>";
+                        }
+                    ?>
+                </td>
             </tr>
-            <tr>
-                <td>2</td>
-                <td>Plumbing</td>
-                <td>2025-01-03 15:00</td>
-                <td>123 Main Street</td>
-                <td>-</td>
-                <td><span class="badge bg-danger">Cancelled</span></td>
-            </tr>
+            <?php
+                }
+            } else {
+                echo "<tr><td colspan='6'>No history available</td></tr>";
+            }
+            ?>
         </tbody>
     </table>
 </div>

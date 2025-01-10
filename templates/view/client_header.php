@@ -26,14 +26,14 @@
             
             <li class="sidebar-items">
                 <a href="client_services.php" class="sidebar-link">
-                <i class="fas fa-tasks"></i>
-                <span>Services</span>
+                    <i class="fa-solid fa-list"></i>
+                    <span>Services</span>
                 </a>
             </li>
             <li class="sidebar-items">
                 <a href="client_booknew.php" class="sidebar-link">
-                <i class="fa-solid fa-list"></i>
-                <span>My Bookings</span>
+                    <i class="fas fa-tasks"></i>
+                    <span>Book service</span>
                 </a>
             </li>
             <li class="sidebar-items">

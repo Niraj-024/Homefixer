@@ -1,6 +1,7 @@
 <?php include ('../controller/session.php');
 if($_SESSION['role'] != 'admin' && $_SESSION['role'] != 'spr'):
     include('client_header.php');
+    $id = $_SESSION['id'];
 ?> 
 <div class="container mt-3">
     <ul class="nav nav-pills">
@@ -19,32 +20,32 @@ if($_SESSION['role'] != 'admin' && $_SESSION['role'] != 'spr'):
 <!-- Book Service Form -->
 <div class="container m-3 p-3 w-auto h-auto border ">
     <h5>Book New Service</h5>
-    <form>
+    <form method="POST" action="client_book_process.php?book=yes" name="book_form" enctype="multipart/form-data">
         <div class="mb-3">
             Service Type
-            <select class="form-select" id="serviceType" required>
+            <select class="form-select" id="serviceType" name="serviceType" required>
                 <option value="" selected disabled>Select a Service</option>
-                <option value="plumbing">Plumbing</option>
-                <option value="electrical">Electrical</option>
-                <option value="cleaning">Cleaning</option>
-                <option value="painting">Painting</option>
+                <option value="Plumbing">Plumbing</option>
+                <option value="Electrical">Electrical</option>
+                <option value="Cleaning">Cleaning</option>
+                <option value="Painting">Painting</option>
             </select>
         </div>
         <div class="mb-3">
             Preferred Date/Time
-            <input type="datetime-local" class="form-control" id="bookingDate" required>
+            <input type="datetime-local" class="form-control" id="bookingDate" name="bookingDate" required>
         </div>
         <div class="mb-3">
             Description
-            <textarea class="form-control" id="description"  rows="3" placeholder="Describe your service requirements" required></textarea>
+            <textarea class="form-control" id="description" name="description" rows="3" placeholder="Describe your service requirements" required></textarea>
         </div>
         <div class="mb-3">
             Service Location
-            <input type="text" class="form-control" id="address" placeholder="Enter the service location" required>
+            <input type="text" class="form-control" name="address" id="address" placeholder="Enter the service location" required>
         </div>
         <div class="mb-3">
             Contact Details
-            <input type="number" class="form-control" id="contact" placeholder="Enter your phone number" >
+            <input type="number" class="form-control" id="contact" name="contact" placeholder="Enter your phone number" required>
             <script>
             const input = document.getElementById('contact');
             input.addEventListener('input', () => {
@@ -54,10 +55,13 @@ if($_SESSION['role'] != 'admin' && $_SESSION['role'] != 'spr'):
             });
             </script>
         </div>
+        <div class="mb-3">
+            Upload Images (Optional)
+            <input type="file" class="form-control" name="images[]" id="images" multiple>
+        </div>
         <button type="submit" class="btn btn-primary">Submit Booking</button>
     </form>
 </div>
-
 
 <?php include('client_footer.php'); ?>
 

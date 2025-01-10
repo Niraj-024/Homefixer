@@ -1,106 +1,112 @@
-<?php include ('../controller/session.php');
-    include ('../controller/db_conn.php');
-if($_SESSION['role'] != 'admin' && $_SESSION['role'] != 'client'):
+<?php
+include('../controller/session.php');
+include('../controller/db_conn.php');
+
+if ($_SESSION['role'] != 'admin' && $_SESSION['role'] != 'client'):
     include('spr_header.php');
+
+    $sql = "SELECT b.*, u.uname, 
+                (SELECT GROUP_CONCAT(bi.image_path ORDER BY bi.id) 
+                 FROM booking_images bi 
+                 WHERE bi.booking_id = b.booking_id) AS images
+            FROM bookings b 
+            JOIN user u ON b.user_id = u.u_id 
+            WHERE b.status = 'pending';";
+    $result = $conn->query($sql);
+
 ?>
 
-<!-- Service Requests Table -->
-<div class="container m-3 p-3 border w-auto h-auto ">
-    <h5>Service Requests - Pending</h5>
+<div class="container m-3 p-3 border w-auto h-auto">
+    <h5>Pending Orders</h5>
 
     <table class="table table-hover table-bordered">
         <thead class="table-secondary">
             <tr>
-                <th>Request ID</th>
+                <th>Booking ID</th>
                 <th>Client Name</th>
                 <th>Service Type</th>
                 <th>Date/Time</th>
                 <th>Location</th>
+                <th>Status</th>
                 <th>Actions</th>
             </tr>
         </thead>
         <tbody>
-            <tr>
-                <td>1</td>
-                <td>John Doe</td>
-                <td>Plumbing</td>
-                <td>2025-01-10 10:00</td>
-                <td>123 Main St</td>
-                <td>
-                    <div class="d-flex gap-2">
-                        <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#viewModal" onclick="loadRequestInfo(1)">View</button>
-                        <button class="btn btn-sm btn-danger" onclick="rejectRequest()">Reject</button>
+            <?php
+            $sn = 0;
+            if ($result->num_rows > 0) {
+                while ($row = $result->fetch_assoc()) {
+                    // Explode images to array
+                    $images = !empty($row['images']) ? explode(',', $row['images']) : [];
+            ?>
+                    <tr>
+                        <td><?php echo ++$sn; ?></td>
+                        <td><?php echo htmlspecialchars($row['uname']); ?></td>
+                        <td><?php echo htmlspecialchars($row['service_type']); ?></td>
+                        <td><?php echo htmlspecialchars($row['booking_date']); ?></td>
+                        <td><?php echo htmlspecialchars($row['service_location']); ?></td>
+                        <td><span class="badge bg-warning text-dark">Pending</span></td>
+                        <td>
+                            <div class="d-flex gap-3">
+                                <!-- View Button - Opens Modal -->
+                                <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#viewModal<?php echo $row['booking_id']; ?>">View</button>
+                                <!-- Accept Button -->
+                                <form action="spr_request_process.php" method="POST" class="d-inline">
+                                <input type="hidden" name="request_id" value="<?php echo $row['booking_id']; ?>">
+                                <button type="submit" name="action" value="accept" class="btn btn-sm btn-success">Accept</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- Modal for Viewing Request Details -->
+                    <div class="modal fade" id="viewModal<?php echo $row['booking_id']; ?>" tabindex="-1" aria-labelledby="viewModalLabel<?php echo $row['booking_id']; ?>" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="viewModalLabel<?php echo $row['booking_id']; ?>">Service Request Details</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <p><strong>Request ID:</strong> <?php echo $row['booking_id']; ?></p>
+                                    <p><strong>Client Name:</strong> <?php echo htmlspecialchars($row['uname']); ?></p>
+                                    <p><strong>Service Type:</strong> <?php echo htmlspecialchars($row['service_type']); ?></p>
+                                    <p><strong>Preferred Date/Time:</strong> <?php echo htmlspecialchars($row['booking_date']); ?></p>
+                                    <p><strong>Location:</strong> <?php echo htmlspecialchars($row['service_location']); ?></p>
+                                    <p><strong>Contact:</strong> <?php echo htmlspecialchars($row['contact_details']); ?></p>
+                                    <p><strong>Description:</strong> <?php echo htmlspecialchars($row['description']); ?></p>
+                                    <p><strong>Images:</strong></p>
+                                    <div class="d-flex flex-wrap gap-1">
+                                        <?php
+                                        if (!empty($images)) {
+                                            foreach ($images as $image) {
+                                                echo "<img src='/1HF/booking_images/" . htmlspecialchars($image) . "' class='img-fluid m-1' style='max-width: 220px; border:1px solid grey'>";
+                                            }
+                                        } else {
+                                            echo "<p>No images available.</p>";
+                                        }
+                                        ?>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                </td>
-            </tr>
+            <?php
+                }
+            } else {
+                echo "<tr><td colspan='7'>No pending service requests found.</td></tr>";
+            }
+            ?>
         </tbody>
     </table>
 </div>
 
-<!-- Modal for Viewing Request Details -->
-<div class="modal fade" id="viewModal" tabindex="-1" aria-labelledby="viewModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="viewModalLabel">Service Request Details</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p><strong>Request ID:</strong> <span id="requestId">1</span></p>
-                <p><strong>Client Name:</strong> <span id="clientName">John Doe</span></p>
-                <p><strong>Service Type:</strong> <span id="serviceType">Plumbing</span></p>
-                <p><strong>Preferred Date/Time:</strong> <span id="requestDate">2025-01-10 10:00</span></p>
-                <p><strong>Location:</strong> <span id="location">123 Main St</span></p>
-                <p><strong>Contact:</strong> <span id="phone">9877445566</span></p>
-                <p><strong>Description:</strong> <span id="description">Leaking faucet in the kitchen.</span></p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-success" onclick="acceptRequest()">Accept</button>
-                <button type="button" class="btn btn-danger" onclick="rejectRequest()">Reject</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script>
-    // Function to load the request info into the modal
-    function loadRequestInfo(requestId) {
-        // Example: Dynamically load data into the modal
-        document.getElementById("requestId").innerText = requestId;
-        document.getElementById("clientName").innerText = "John Doe";
-        document.getElementById("serviceType").innerText = "Plumbing";
-        document.getElementById("requestDate").innerText = "2025-01-10 10:00";
-        document.getElementById("location").innerText = "123 Main St";
-        document.getElementById("description").innerText = "Leaking faucet in the kitchen.";
-    }
-
-    // Function to accept the request
-    function acceptRequest() {
-        // Action for accepting the request
-        alert("Request Accepted!");
-
-        // Close the modal
-        $('#viewModal').modal('hide');
-    }
-
-    // Function to reject the request
-    function rejectRequest() {
-        // Action for rejecting the request
-        alert("Request Rejected!");
-
-        // Close the modal
-        $('#viewModal').modal('hide');
-    }
-</script>
-
-
-
 <?php include('client_footer.php'); ?>
 
 <?php 
-elseif($_SESSION['role'] == 'client'):
+elseif ($_SESSION['role'] == 'client'):
     header("location: client_profile.php");
-elseif($_SESSION['role'] == 'admin'):
+elseif ($_SESSION['role'] == 'admin'):
     header("location: admin.php");
-endif; ?>
+endif;
+?>

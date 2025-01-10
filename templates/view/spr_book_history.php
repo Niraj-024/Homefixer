@@ -1,7 +1,26 @@
-<?php include ('../controller/session.php');
-    include ('../controller/db_conn.php');
-if($_SESSION['role'] != 'admin' && $_SESSION['role'] != 'client'):
+<?php
+include('../controller/session.php');
+include('../controller/db_conn.php');
+
+if ($_SESSION['role'] != 'admin' && $_SESSION['role'] != 'client'):
     include('spr_header.php');
+    
+    $id = $_SESSION['id']; // provider's ID
+
+    // SQL query to fetch completed or cancelled bookings for the specific provider
+    $sql_history = "SELECT b.*, u.uname, 
+                        (SELECT GROUP_CONCAT(bi.image_path) 
+                         FROM booking_images bi 
+                         WHERE bi.booking_id = b.booking_id) AS images
+                   FROM bookings b
+                   JOIN user u ON b.user_id = u.u_id
+                   WHERE b.provider_id = '$id' AND (b.status = 'completed' OR b.status = 'cancelled')
+                   ORDER BY b.booking_id DESC;"; // Fetch history in descending order of booking ID
+    $result_history = $conn->query($sql_history);
+
+    if (!$result_history) {
+        die("Error fetching history: " . mysqli_error($conn));
+    }
 ?>
 
 <div class="container mt-3">
@@ -15,7 +34,7 @@ if($_SESSION['role'] != 'admin' && $_SESSION['role'] != 'client'):
     </ul>
 </div>
 
-<div class="container m-3 p-3 border w-auto h-auto ">
+<div class="container m-3 p-3 border w-auto h-auto">
     <h5>History</h5>
     <table class="table table-hover table-bordered">
         <thead class="table-primary">
@@ -29,34 +48,42 @@ if($_SESSION['role'] != 'admin' && $_SESSION['role'] != 'client'):
             </tr>
         </thead>
         <tbody>
-            <!-- Example Completed/Cancelled Order -->
-            <tr>
-                <td>2</td>
-                <td>Jane Smith</td>
-                <td>Electrical</td>
-                <td>2025-01-12 14:00</td>
-                <td>456 Oak Ave</td>
-                <td><span class="badge bg-success">Completed</span></td>
-            </tr>
-            <tr>
-                <td>3</td>
-                <td>Bob Johnson</td>
-                <td>Cleaning</td>
-                <td>2025-01-14 09:00</td>
-                <td>789 Pine Rd</td>
-                <td><span class="badge bg-secondary text-dark">Cancelled</span></td>
-            </tr>
+            <?php
+            $sn = 0;
+            if ($result_history->num_rows > 0) {
+                while ($row = $result_history->fetch_assoc()) {
+                    if ($row['status'] == 'completed') {
+                        $status_text = 'Completed';
+                        $badge_class = 'bg-success';
+                    } else {
+                        $status_text = 'Cancelled';
+                        $badge_class = 'bg-secondary text-dark';
+                    }
+            ?>
+                    <tr>
+                        <td><?php echo ++$sn; ?></td>
+                        <td><?php echo htmlspecialchars($row['uname']); ?></td>
+                        <td><?php echo htmlspecialchars($row['service_type']); ?></td>
+                        <td><?php echo htmlspecialchars($row['booking_date']); ?></td>
+                        <td><?php echo htmlspecialchars($row['service_location']); ?></td>
+                        <td><span class="badge <?php echo $badge_class; ?>"><?php echo $status_text; ?></span></td>
+                    </tr>
+            <?php
+                }
+            } else {
+                echo "<tr><td colspan='6'>No completed or cancelled requests found.</td></tr>";
+            }
+            ?>
         </tbody>
     </table>
 </div>
 
-
-
 <?php include('client_footer.php'); ?>
 
-<?php 
-elseif($_SESSION['role'] == 'client'):
+<?php
+elseif ($_SESSION['role'] == 'client'):
     header("location: client_profile.php");
-elseif($_SESSION['role'] == 'admin'):
+elseif ($_SESSION['role'] == 'admin'):
     header("location: admin.php");
-endif; ?>
+endif;
+?>
