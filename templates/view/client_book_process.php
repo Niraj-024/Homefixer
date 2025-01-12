@@ -1,8 +1,8 @@
 <?php
 include('../controller/db_conn.php');
-session_start();
-
-if ($_SERVER['REQUEST_METHOD'] === "POST") {
+include ('../controller/session.php');
+if($_SESSION['role'] != 'admin' && $_SESSION['role'] != 'spr'):
+    if ($_SERVER['REQUEST_METHOD'] === "POST") {
     if (isset($_GET['book'])) {
         $serviceType = htmlspecialchars(trim($_POST['serviceType']));
         $bookingDate = htmlspecialchars(trim($_POST['bookingDate']));
@@ -85,3 +85,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_SESSION['bid'])) {
     }
 }
 ?>
+<?php 
+elseif($_SESSION['role'] == 'spr'):
+    header("location: spr_profile.php");
+elseif($_SESSION['role'] == 'admin'):
+    header("location: admin.php");
+endif; ?>

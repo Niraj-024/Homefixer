@@ -37,7 +37,7 @@
                 </a>
             </li>
             <li class="sidebar-items">
-                <a href="client_reviews.php" class="sidebar-link">
+                <a href="client_review_history.php" class="sidebar-link">
                 <i class="fa-solid fa-star"></i>
                 <span>My Reviews</span>
                 </a>
