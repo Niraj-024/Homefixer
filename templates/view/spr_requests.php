@@ -43,7 +43,7 @@ if ($_SESSION['role'] != 'admin' && $_SESSION['role'] != 'client'):
                         <td><?php echo ++$sn; ?></td>
                         <td><?php echo htmlspecialchars($row['uname']); ?></td>
                         <td><?php echo htmlspecialchars($row['service_type']); ?></td>
-                        <td><?php echo htmlspecialchars($row['booking_date']); ?></td>
+                        <td><?php echo date('d M Y,h:i A', strtotime($row['booking_date']));?></td>
                         <td><?php echo htmlspecialchars($row['service_location']); ?></td>
                         <td><span class="badge bg-warning text-dark">Pending</span></td>
                         <td>

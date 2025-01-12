@@ -17,7 +17,7 @@ if ($_SESSION['role'] != 'admin' && $_SESSION['role'] != 'spr'):
 ?>  
 
 <div class="container m-3 p-3 border w-auto h-auto">
-    <h5>My Reviews</h5>
+    <h5 class="text-center">My Reviews</h5>
     <?php if ($result->num_rows > 0): ?>
         <table class="table table-hover table-bordered mt-3 table-responsive">
             <thead class="table-secondary">
@@ -38,10 +38,10 @@ if ($_SESSION['role'] != 'admin' && $_SESSION['role'] != 'spr'):
                 ?>
                 <tr>
                     <td><?php echo $sn; ?></td>
-                    <td><?php echo htmlspecialchars($row['service_type']); ?></td>
-                    <td><?php echo htmlspecialchars($row['uname']); ?></td>
+                    <td><?php echo $row['service_type']; ?></td>
+                    <td><?php echo ($row['uname']); ?></td>
                     <td><?php echo date('d M Y, h:i A', strtotime($row['review_date'])); ?></td>
-                    <td><?php echo str_repeat('&#9733;', $row['rating']); ?></td>
+                    <td><?php echo str_repeat('⭐', $row['rating']); ?></td>
                     <td><?php echo htmlspecialchars($row['comments']); ?></td>
                 </tr>
                 <?php endwhile; ?>

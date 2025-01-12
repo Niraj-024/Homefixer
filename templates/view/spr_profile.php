@@ -45,7 +45,7 @@ $result = mysqli_query($conn , $query);
         <p class="mb-2"><strong>Contact:</strong> <?php echo $row['phone']; ?> </p>
         <p class="mb-2"><strong>Email:</strong> <?php echo $row['email']; ?></p>
         <p class="mb-2"><strong>Address:</strong> <?php echo $row['address']; ?></p>
-        <p class="mb-0"><strong>Member Since:</strong> <?php echo $row['created']; ?></p>
+        <p class="mb-0"><strong>Member Since:</strong> <?php echo date('d M Y,h:i A', strtotime($row['created'])); ?></p>
     </div>
 
     <?php
