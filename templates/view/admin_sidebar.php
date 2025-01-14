@@ -15,24 +15,47 @@ include ('../controller/session.php');
     <div class="sidebar">
         <h2>Welcome, <?php echo $_SESSION['uname'] ;?></h2><hr>
         <div class="menu-item">
-            <i class="fas fa-user"></i>
-            <span><a href="admin.php">Admins</a></span>
+            <a href="admin.php" class="sidebar-link">
+                <i class="fas fa-user-shield"></i>
+                <span>Admins</span>
+            </a>
+        </div>
+
+        <div class="menu-item">
+            <a href="admin_client.php" class="sidebar-link">
+                <i class="fas fa-user"></i>
+                <span>Clients</span>
+            </a>
         </div>
         <div class="menu-item">
-            <i class="fas fa-users"></i>
-            <span><a href="admin_client.php">Clients</a></span>
+            <a href="admin_spr.php" class="sidebar-link">
+                <i class="fas fa-user-cog"></i>
+                <span>Service Providers</span>
+            </a>
         </div>
         <div class="menu-item">
-            <i class="fas fa-briefcase"></i>
-            <span><a href="admin_spr.php">Service Providers</a></span>
+            <a href="admin_service.php" class="sidebar-link">
+                <i class="fas fa-tools"></i>
+                <span>Services</span>
+            </a>
         </div>
         <div class="menu-item">
-            <i class="fas fa-tasks"></i>
-            <span><a href="admin_service.php">Services</a></span>
+            <a href="admin_books.php" class="sidebar-link">
+                <i class="fas fa-calendar"></i>
+                <span>All Bookings</span>
+            </a>
         </div>
         <div class="menu-item">
-            <i class="fas fa-arrow-right-from-bracket"></i>
-            <span><a href="logout.php">Logout</a></span>
+            <a href="admin_reviews.php" class="sidebar-link">
+                <i class="fas fa-star"></i>
+                <span>All Reviews</span>
+            </a>
+        </div>
+        <div class="menu-item">
+            <a href="logout.php" class="sidebar-link">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </a>
         </div>
     </div>
 </body>
