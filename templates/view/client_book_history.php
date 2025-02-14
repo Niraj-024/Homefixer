@@ -8,7 +8,7 @@ if($_SESSION['role'] != 'admin' && $_SESSION['role'] != 'spr'):
     $sql ="SELECT b.*, u.uname 
     FROM bookings b
     LEFT JOIN user u ON b.provider_id = u.u_id
-    WHERE b.user_id = '15' AND (b.status = 'completed' OR b.status = 'cancelled' OR b.status = 'reviewed')
+    WHERE b.user_id = '$id' AND (b.status = 'completed' OR b.status = 'cancelled' OR b.status = 'reviewed')
     ORDER BY b.booking_date DESC;";
     
     $result = $conn->query($sql);

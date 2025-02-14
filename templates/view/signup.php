@@ -98,7 +98,7 @@ $conn->close();
  
 <!-- popup*************** -->
 <body>
-<span><?php echo $msg ; ?></span>
+<!-- <span><?php echo $msg ; ?></span> -->
 
 <div class="spopup" id="smyForm">
     <a>

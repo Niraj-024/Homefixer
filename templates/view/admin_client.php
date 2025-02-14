@@ -113,7 +113,7 @@ if(isset($_GET['updatemsg'])){
         </div>
         <div class="form-group">
             <label for="role">Role</label>
-            <input type="text" id="role" name="role" class="form-control">
+            <input type="text" id="role" name="role" value="client" readonly class="form-control">
         </div>
       </div>
       <div class="modal-footer">
