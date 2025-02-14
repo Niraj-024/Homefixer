@@ -16,6 +16,8 @@ if($_SESSION['role'] != 'client' && $_SESSION['role'] != 'spr'):
 <h2>Manage Service Providers</h2>
 <div class="mb-10">
     <button class="btn btn-primary float-end mb-2" data-bs-toggle="modal" data-bs-target="#staticBackdrop" >Add New Provider</button>
+    <a href="admin_unapproved_spr.php" class="btn btn-secondary text-white text-decoration-none">New Requests</a>
+
 </div>
 <table class="table table-hover table-bordered table-striped">
     <thead>
@@ -31,7 +33,7 @@ if($_SESSION['role'] != 'client' && $_SESSION['role'] != 'spr'):
     </thead>
     <tbody>
         <?php
-        $query = 'SELECT * from user where role = "spr"; ';
+        $query = 'SELECT * from user where role = "spr" AND is_approved="1"; ';
         $result = mysqli_query($conn , $query);
 
         if(!$result){
