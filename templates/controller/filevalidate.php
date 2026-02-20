@@ -19,7 +19,7 @@ $uploadDir = 'C:/xampp/htdocs/1HF/db_images/'; // Directory to upload files
                 if (!file_exists($uploadDir . $fileName)) {
                     // Move the uploaded file to the desired directory
                     if (move_uploaded_file($fileTmp, $uploadDir . $fileName)) {
-                        echo "File uploaded successfully! &nbsp;";
+                        // echo "File uploaded successfully! &nbsp;";
                     } else {
                         $file_Err = "File upload failed. &nbsp; ";
                         $count++;

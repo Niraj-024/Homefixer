@@ -8,7 +8,8 @@ if ($_SESSION['role'] != 'client' && $_SESSION['role'] != 'spr') {
     $query = "SELECT r.*, b.service_type, u.uname 
               FROM reviews r 
               INNER JOIN bookings b ON r.booking_id = b.booking_id 
-              INNER JOIN user u ON b.user_id = u.u_id";
+              INNER JOIN user u ON b.user_id = u.u_id
+              Where r.status='1'; ";
     $result = mysqli_query($conn, $query);
 
     if (!$result) {

@@ -1,0 +1,75 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+
+body{
+    font-family:'Poppins','sans-serif';
+}
+
+li{
+    list-style: none;
+}
+a{
+    text-decoration: none;
+}
+.main{
+    background: #f9f9f9;
+    height: 100vh;
+    width: 100%;
+    overflow: hidden;
+}
+#sidebar{
+    max-width: 260px;
+    min-width: 260px;
+    display: flex;
+    flex-direction: column;
+    background:rgb(240, 238, 238);
+
+}
+.sidebar-nav{
+    flex: 1 1 auto;
+}
+#sidebar .logo{
+    padding: .5rem .5rem;
+}
+a.sidebar-link{
+    padding: 0.625rem 1.625rem;
+    position:relative ;
+    transition:all 0.35s;
+    display: block;
+    font-size: large;
+    color: #1f1b1b;
+}
+a.sidebar-link:hover{
+    background:rgb(121, 121, 180);
+}
+.head{
+    color: #1f1b1b;
+    background:rgb(240, 238, 238);
+}
+
+.profile{
+    max-height: 600px;
+}
+.card img{
+    height: 250px;
+    width: 250px;
+}
+/* for update form */
+.crud-section {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    margin: 20px;
+}
+.crud-section h2{
+    text-align: center;
+    margin-bottom: 10px;
+    background: #2c3e50;
+    color: white;
+    padding: 10px;
+    border-radius: 20px;
+    font-size: large;
+} 
+/* update form ends*/
+

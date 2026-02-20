@@ -4,46 +4,27 @@ include("admin_header.php");
 include("../controller/db_conn.php");
 ?>
 
-
 <?php
-// if(isset($_GET['name'])){
-//     $dname = $_GET['name'];
-//     $role = $_GET['role'];
-// $query = "DELETE from user where uname = '$dname' ;" ;
-// $result = mysqli_query($conn , $query);
-
-// if(!$result){
-//     die('Delete failed'. $conn-> error);
-// }else{
-//     if($role == 'admin')
-//     header('location:admin.php?deletemsg=***Record deleted successfully***');
-//     elseif($role == 'client')
-//     header(('location:admin_client.php?deletemsg=***Record deleted successfully***'));
-//     elseif($role == 'spr')
-//     header(('location:admin_spr.php?deletemsg=***Record deleted successfully***'));
-
-// } 
-// }
 if(isset($_POST['deleteuserbtn'])){
-    $uname= $_POST['uname'];
+    $uname = $_POST['uname'];
     $role = $_GET['role'];
-    $query = "DELETE from user where uname = '$uname' ;" ;
+    
+    $query = "UPDATE user SET isactive = 0 WHERE uname = '$uname'";
 
-    $result = mysqli_query($conn , $query);
+    $result = mysqli_query($conn, $query);
+    
     if(!$result){
-        die('Delete failed'. $conn-> error);
-        }else{
+        die('Status update failed: ' . $conn->error);
+    } else {
         if($role == 'admin')
-        header('location:admin.php?deletemsg=***Record deleted successfully***');
+            header('location:admin.php?deletemsg=***User deactivated successfully***');
         elseif($role == 'client')
-        header(('location:admin_client.php?deletemsg=***Record deleted successfully***'));
+            header('location:admin_client.php?deletemsg=***User deactivated successfully***');
         elseif($role == 'spr')
-        header(('location:admin_spr.php?deletemsg=***Record deleted successfully***'));
+            header('location:admin_spr.php?deletemsg=***User deactivated successfully***');
     }        
 }
 ?>
-
-
 <!-- for service deletion -->
 <?php
 if(isset($_POST['deleteservicebtn'])){
@@ -53,13 +34,9 @@ if(isset($_POST['deleteservicebtn'])){
         die("Failed delete".$conn->error);
     }else{
         header('location:admin_service.php?deletemsg=***Record deleted successfully***');
-
     }
 }
 ?>
-
-
-
 <?php
 include('admin_footer.php');
 ?>

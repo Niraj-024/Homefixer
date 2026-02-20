@@ -1,0 +1,125 @@
+/* General Reset and Font */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Poppins", sans-serif;
+}
+
+/* Image Styling */
+.spopup a {
+    width: 265px;
+    padding-left: 52px;
+}
+
+/* Popup Box Styling */
+.spopup {
+    margin: 15px auto;
+    width: 380px;
+    padding: 20px 30px;
+    background: #fff;
+    box-shadow: 2px 2px 5px 5px rgba(0, 0, 0, 0.15);
+    border-radius: 10px;
+    position: relative;
+}
+
+/* Close Button Styling */
+.spopup .sclose-btn .sbtn-cancel {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    width: 20px;
+    height: 20px;
+    text-align: center;
+    line-height: 15px;
+    border-radius: 3px;
+    cursor: pointer;
+    color: #2b2a2a;
+    border-style: none;
+}
+
+/* Remove Extra Height from Close Button Container */
+.sclose-btn {
+    height: 0;
+}
+
+/* Form Title Styling */
+.spopup .sform h2 {
+    text-align: center;
+    color: rgba(0, 2, 3, 0.753);
+    margin: 10px 0 20px;
+    font-size: 25px;
+}
+
+/* Form Elements Styling */
+.spopup .sform .sform-element {
+    margin: 15px 0;
+}
+
+/* Labels */
+.spopup .sform .sform-element label {
+    font-size: 14px;
+    color: #222;
+    font-weight: 400;
+}
+
+/* Input Fields */
+.spopup .sform .sform-element input[type="text"],
+.spopup .sform .sform-element input[type="date"],
+.spopup .sform .sform-element input[type="email"],
+.spopup .sform .sform-element input[type="file"],
+.spopup .sform .sform-element input[type="number"],
+.spopup .sform .sform-element input[type="password"],
+textarea,
+.spopup .sform .sform-element select,
+.spopup .sform .sform-element .form-control {
+    margin-top: 5px;
+    display: block;
+    width: 100%;
+    padding: 10px;
+    outline: none;
+    border: 2px solid #aaa;
+    border-radius: 5px;
+    font-weight: 400;
+}
+
+/* Radio Buttons */
+.spopup .sform .sform-element input[type="radio"] {
+    accent-color: #2f739e;
+}
+
+/* error msg */
+.spopup .sform .sform-element span{
+    color: rgb(201, 21, 21);
+    font-size: 11px;
+    position: absolute;
+}
+
+/* Submit Button */
+.spopup .sform .sform-element button {
+    width: 100%;
+    height: 40px;
+    border: none;
+    outline: none;
+    font-size: 16px;
+    background: #3E799D;
+    color: #f5f5f5;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.spopup .sform .sform-element button:hover {
+    background-color: #02080c;
+}
+
+/* Links */
+.spopup .sform .sform-element a {
+    display: block;
+    float: right;
+    font-size: 15px;
+    color: #1a79ca;
+    text-decoration: none;
+    font-weight: 500;
+}

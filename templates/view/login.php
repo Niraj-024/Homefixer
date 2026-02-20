@@ -3,36 +3,81 @@ $title = 'Login';
 include('header.php');
 $login = false;
 $errmsg = false;
-// ---------validation----
-if($_SERVER["REQUEST_METHOD"] == "POST"){
-  include('../controller/db_conn.php');
-  $uname = $_POST["uname"];
-  $pass = $_POST["pass"];
-  $sql = "SELECT * FROM user WHERE uname = '$uname' AND password='$pass'; ";   
-  $result = $conn->query($sql);
-  if($result->num_rows == 1){ //find for user
-    while($row = mysqli_fetch_assoc($result)){
-      if($pass == $row['password']){
-          $login = true;
-          session_start();
-          $_SESSION['loggedin'] = true;
-          $_SESSION['uname'] = $uname;
-          $_SESSION['id'] = $row['u_id'];
-          $role = $row['role'];//fetch role
-          $_SESSION['role'] = $role;
-          //role based redirect
-          if($role =='spr'){header("location:spr_profile.php");}
-          if($role =='client'){header("location:client_profile.php");}
-          if($role =='admin'){header("location:admin.php");}
-      }else{
-        $errmsg = "Invalid , try again !";
-      }
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    include('../controller/db_conn.php');
+    session_start();
+    
+    $uname = $_POST["uname"];
+    $pass = $_POST["pass"];
+
+    //fetch all info
+    $sql = "SELECT * FROM user WHERE uname = '$uname'";
+    $result = $conn->query($sql);
+    $num_rows = $result->num_rows;
+
+    if ($num_rows == 0) {  
+
+      //user not found
+      $errmsg = "Invalid Credentials, try again!";
+    } elseif ($num_rows == 1) {  
+        // found one row, means one role
+        $row = mysqli_fetch_assoc($result);
+        if ($pass == $row['password']) {
+            $_SESSION['loggedin'] = true;
+            $_SESSION['uname'] = $uname;
+            $_SESSION['id'] = $row['u_id'];
+            $_SESSION['role'] = $row['role'];
+
+            // Redirect based on role
+            if ($row['role'] == 'spr') { header("location:spr_profile.php"); exit; }
+            if ($row['role'] == 'client') { header("location:client_profile.php"); exit; }
+            if ($row['role'] == 'admin') { header("location:admin.php"); exit; }
+        } else {
+            $errmsg = "Invalid Password, try again!";
+        }
+    } else {  
+        // for multi role
+        $_SESSION['uname'] = $uname;
+        $_SESSION['password'] = $pass;
+
+        echo "<h3>Select Your Role:</h3>";
+        while ($row = mysqli_fetch_assoc($result)) {
+            echo "<form action='' method='POST'>";
+            echo "<input type='hidden' name='role' value='{$row['role']}'>";
+            echo "<button type='submit'>{$row['role']}</button>";
+            echo "</form>";
+        }
+        exit;
     }
-  }else{
-    $errmsg = "Invalid Credentials, try again !";
-  }
+}
+
+// Handle role selection
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['role'])) {
+    $role = $_POST['role'];
+    $uname = $_SESSION['uname'];
+    $pass = $_SESSION['password'];
+
+    // get user info for selected role
+    $sql = "SELECT * FROM user WHERE uname = '$uname' AND role = '$role'";
+    $result = $conn->query($sql);
+    $user = mysqli_fetch_assoc($result);
+
+    if ($user && $pass == $user['password']) {
+        $_SESSION['loggedin'] = true;
+        $_SESSION['id'] = $user['u_id'];
+        $_SESSION['role'] = $user['role'];
+
+        // Redirect based on role
+        if ($role == 'spr') { header("location:spr_profile.php"); exit; }
+        if ($role == 'client') { header("location:client_profile.php"); exit; }
+        if ($role == 'admin') { header("location:admin.php"); exit; }
+    } else {
+        $errmsg = "Invalid Credentials!";
+    }
 }
 ?>
+
 <!doctype html>
 <html>
 <body>

@@ -13,7 +13,8 @@ if ($_SESSION['role'] != 'client' && $_SESSION['role'] != 'spr') :
                 b.service_location, 
                 b.status 
               FROM bookings b
-              JOIN user u ON b.user_id = u.u_id";
+              JOIN user u ON b.user_id = u.u_id
+              ORDER BY booking_date DESC";
     $result = mysqli_query($conn, $query);
 ?>
     <div class="container mt-4">
@@ -31,10 +32,13 @@ if ($_SESSION['role'] != 'client' && $_SESSION['role'] != 'spr') :
                 </tr>
             </thead>
             <tbody>
-                <?php if (mysqli_num_rows($result) > 0) : ?>
+                <?php $bc=1;
+                 if (mysqli_num_rows($result) > 0) : ?>
                     <?php while ($row = mysqli_fetch_assoc($result)) : ?>
                         <tr>
-                            <td><?php echo $row['booking_id']; ?></td>
+                            <td><?php echo $bc++;
+                            // $row['booking_id']; 
+                            ?></td>
                             <td><?php echo $row['client_name']; ?></td>
                             <td><?php echo $row['service_type']; ?></td>
                             <td><?php echo $row['booking_date']; ?></td>

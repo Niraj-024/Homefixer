@@ -1,0 +1,80 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+body {
+    display: flex;
+    background-color: #f5f7fa;
+}
+.sidebar {
+    width: 250px;
+    background: #2c3e50;
+    color: white;
+    padding: 20px;
+    min-height: 100vh;
+    position: fixed;
+}
+.sidebar a{
+    text-decoration: none;
+    display: block ;
+    color: #f8f9fa;
+}
+.menu-item {
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    display: block;
+    align-items: center;
+    gap: 10px;
+}
+.menu-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+.container #adm{
+    margin-left: 15%;
+    text-align: center;
+    background-color: #2f4357;
+    color: white;
+    padding: 20px;
+    font-size: larger;
+}
+.crud-section {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    margin-left: 15%;
+}
+.crud-section h2{
+    text-align: center;
+    margin-bottom: 10px;
+    background: #2c3e50;
+    color: white;
+    padding: 10px;
+    border-radius: 20px;
+    font-size: large;
+
+} 
+.crud-section div, .crud-section table{
+    margin-top: 25px;
+}
+.crud-section .modal-footer{
+display: flex;
+align-items: center;
+justify-content:space-evenly ;
+}
+h6{
+    text-align: center;
+    color: rgb(226, 38, 38);
+}
+p{
+    text-align: center;
+    color: green;
+    font-weight: 600;
+}
+td button{
+    justify-content: center;
+}

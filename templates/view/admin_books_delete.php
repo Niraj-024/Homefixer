@@ -18,17 +18,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['booking_id'])) {
 
 //for deleting reviews
 if (isset($_GET['review_id'])) {
-    $review_id =$_GET['review_id'];
+    $review_id = $_GET['review_id'];
 
+    // Check if the review exists
     $query = "SELECT * FROM reviews WHERE review_id = $review_id";
     $result = mysqli_query($conn, $query);
 
     if (mysqli_num_rows($result) > 0) {
-        $delete_query = "DELETE FROM reviews WHERE review_id = $review_id";
-        if (mysqli_query($conn, $delete_query)) {
-            echo "<div class='alert alert-success'>Review deleted successfully.</div>";
+        $update_query = "UPDATE reviews SET status = 0 WHERE review_id = $review_id";
+        if (mysqli_query($conn, $update_query)) {
+            echo "<div class='alert alert-success'>Review deactivated successfully.</div>";
         } else {
-            echo "<div class='alert alert-danger'>Error deleting review: " . mysqli_error($conn) . "</div>";
+            echo "<div class='alert alert-danger'>Error deactivating review: " . mysqli_error($conn) . "</div>";
         }
     } else {
         echo "<div class='alert alert-warning'>Review not found.</div>";
@@ -40,4 +41,3 @@ if (isset($_GET['review_id'])) {
 echo "<a href='admin_reviews.php' class='btn btn-secondary mt-3'>Back to Reviews</a>";
 
 ?>
-

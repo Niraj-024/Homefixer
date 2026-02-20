@@ -33,8 +33,7 @@ if($_SESSION['role'] != 'admin' && $_SESSION['role'] != 'spr'):
         </div>
         <div class="mb-3">
             Preferred Date/Time
-            <input type="datetime-local" class="form-control" id="bookingDate" name="bookingDate" required>
-        </div>
+            <input type="datetime-local" class="form-control" id="bookingDate" name="bookingDate" required min="<?= date('Y-m-d\TH:i') ?>"></div>
         <div class="mb-3">
             Description
             <textarea class="form-control" id="description" name="description" rows="3" placeholder="Describe your service requirements" required></textarea>

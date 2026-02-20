@@ -5,19 +5,24 @@ include('../controller/db_conn.php');
 if ($_SESSION['role'] != 'admin' && $_SESSION['role'] != 'client'):
     include('spr_header.php');
 
-    $sql = "SELECT b.*, u.uname, 
-                (SELECT GROUP_CONCAT(bi.image_path ORDER BY bi.id) 
-                 FROM booking_images bi 
-                 WHERE bi.booking_id = b.booking_id) AS images
-            FROM bookings b 
-            JOIN user u ON b.user_id = u.u_id 
-            WHERE b.status = 'pending';";
-    $result = $conn->query($sql);
-
+    $category = isset($_GET['category'])? $_GET['category'] : '0';
 ?>
 
 <div class="container m-3 p-3 border w-auto h-auto">
-    <h5>Pending Orders</h5>
+    <div class="d-flex justify-content-between">
+    <h5>Pending Requests</h5>
+    <form action="" method="GET" class="gap-2">
+    <label for="category">Filter by:</label>
+    <select name="category" id="category" onchange="this.form.submit()">
+        <option value="0" <?= ($category=='0')?'selected':''?>>None</option>
+        <option value="Plumbing" <?= ($category=='Plumbing')?'selected':'' ?> >Plumbing</option>
+        <option value="Electrical" <?= ($category=='Electrical')?'selected':'' ?> >Electrical</option>
+        <option value="Cleaning" <?= ($category=='Cleaning')?'selected':'' ?> >Cleaning</option>
+        <option value="Painting" <?= ($category=='Painting')?'selected':'' ?> >Painting</option>
+        
+    </select>
+    </form>
+    </div>
 
     <table class="table table-hover table-bordered">
         <thead class="table-secondary">
@@ -33,6 +38,20 @@ if ($_SESSION['role'] != 'admin' && $_SESSION['role'] != 'client'):
         </thead>
         <tbody>
             <?php
+
+            $sql = "SELECT b.*, u.uname, 
+            (SELECT GROUP_CONCAT(bi.image_path ORDER BY bi.id) 
+             FROM booking_images bi 
+             WHERE bi.booking_id = b.booking_id) AS images
+             FROM bookings b 
+             JOIN user u ON b.user_id = u.u_id 
+             WHERE b.status = 'pending' ";
+
+            if($category!=0){
+                $sql .= "AND b.service_type = '$category';";
+            }
+
+            $result = $conn->query($sql);
             $sn = 0;
             if ($result->num_rows > 0) {
                 while ($row = $result->fetch_assoc()) {
