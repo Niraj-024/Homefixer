@@ -2,16 +2,8 @@
 include('../controller/db_conn.php');
 include('../controller/session.php');
 
-if (!isset($_SESSION['role'])) {
+if (!isset($_SESSION['role']) || $_SESSION['role'] != 'client') {
     header("location: login.php");
-    exit();
-}
-
-if ($_SESSION['role'] == 'spr') {
-    header("location: spr_profile.php");
-    exit();
-} elseif ($_SESSION['role'] == 'admin') {
-    header("location: admin.php");
     exit();
 }
 
@@ -27,7 +19,8 @@ if ($booking_id <= 0) {
 }
 
 // Fetch booking and user
-$sql = "SELECT b.*, u.uname FROM bookings b
+$sql = "SELECT b.*, u.uname 
+        FROM bookings b
         JOIN user u ON b.user_id = u.u_id
         WHERE b.booking_id = $booking_id";
 $result = $conn->query($sql);
@@ -40,17 +33,23 @@ if (!$result || $result->num_rows == 0) {
 
 $row = $result->fetch_assoc();
 
-// Amount breakdown
-$amount = $row['payment_amount']; // base amount
-$tax_amount = 0.13*$amount;
-$service_charge = 0.05*$amount;
+// Amount breakdown (from provider input after completion)
+$amount = floatval($row['payment_amount']);
+if ($amount <= 0) {
+    echo "<div class='alert alert-warning'>Amount is not set yet by the provider. Please check later.</div>";
+    include('client_footer.php');
+    exit();
+}
+
+$tax_amount = 0.13 * $amount;
+$service_charge = 0.05 * $amount;
 $delivery_charge = 0;
 $total_amount = $amount + $tax_amount + $service_charge + $delivery_charge;
 
 // eSewa test values
 $product_code = "EPAYTEST";
 $transaction_uuid = 'BOOK' . $booking_id . '_' . uniqid();
-$success_url = "http://localhost/1HF/templates/view/client_pay_success.php?q=su";
+$success_url = "http://localhost/1HF/templates/view/client_pay_success.php?q=su&booking_id=$booking_id";
 $fail_url = "http://localhost/1HF/templates/view/client_pay_failed.php?q=fu";
 $signed_field_names = "total_amount,transaction_uuid,product_code";
 
@@ -58,11 +57,9 @@ $signed_field_names = "total_amount,transaction_uuid,product_code";
 function generateEsewaSignature($data, $secret_key) {
     $signed_fields = explode(",", $data['signed_field_names']);
     $string_to_sign = "";
-
     foreach ($signed_fields as $field) {
         $string_to_sign .= $field . "=" . $data[$field] . ",";
     }
-
     $string_to_sign = rtrim($string_to_sign, ",");
     return base64_encode(hash_hmac('sha256', $string_to_sign, $secret_key, true));
 }
@@ -84,7 +81,7 @@ $signature = generateEsewaSignature($data, $secret_key);
         <p><strong>Booking ID:</strong> <?= $booking_id ?></p>
         <p><strong>Client Name:</strong> <?= htmlspecialchars($row['uname']) ?></p>
         <p><strong>Service:</strong> <?= htmlspecialchars($row['service_type']) ?></p>
-        <p><strong>Amount:</strong> Rs <?= number_format($amount, 2) ?></p>
+        <p><strong>Amount to Pay:</strong> Rs <?= number_format($total_amount, 2) ?></p>
 
         <form action="https://rc-epay.esewa.com.np/api/epay/main/v2/form" method="POST">
             <input type="hidden" name="amount" value="<?= $amount ?>">

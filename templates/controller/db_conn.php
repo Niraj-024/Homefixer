@@ -14,7 +14,6 @@ if ($conn->connect_error) {
     die("Failed connecting to server..." . $conn->connect_error);
 } 
 
-// SQL queries to create the tables if they don't exist
 $createUserTable = "
 CREATE TABLE IF NOT EXISTS user (
     u_id INT(11) AUTO_INCREMENT PRIMARY KEY,
@@ -26,9 +25,10 @@ CREATE TABLE IF NOT EXISTS user (
     dob DATE DEFAULT NULL,
     role ENUM('client', 'spr', 'admin') NOT NULL,
     image VARCHAR(255) DEFAULT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     is_active TINYINT(1) NOT NULL DEFAULT 1,
+    is_approved TINYINT(1) NOT NULL DEFAULT 0,
     is_super TINYINT(1) NOT NULL DEFAULT 0
 )";
 

@@ -48,7 +48,6 @@ if ($_SESSION['role'] != 'admin' && $_SESSION['role'] != 'client'):
             $sn = 0;
             if ($result->num_rows > 0) {
                 while ($row = $result->fetch_assoc()) {
-                    // Explode images to array
                     $images = !empty($row['images']) ? explode(',', $row['images']) : [];
             ?>
                     <tr>
@@ -59,13 +58,15 @@ if ($_SESSION['role'] != 'admin' && $_SESSION['role'] != 'client'):
                         <td><?php echo htmlspecialchars($row['service_location']); ?></td>
                         <td><span class="badge bg-warning text-dark">Accepted</span></td>
                         <td>
-                            <div class="d-flex gap-3">
+                            <div class="d-flex gap-3 align-items-center">
                                 <!-- View Button - Opens Modal -->
                                 <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#viewModal<?php echo $row['booking_id']; ?>">View</button>
-                                <!-- Mark Completed Button -->
+
+                                <!-- Inline form to mark completed & enter amount -->
                                 <form action="spr_request_process.php" method="POST" class="d-inline">
                                     <input type="hidden" name="booking_id" value="<?php echo $row['booking_id']; ?>">
-                                    <button type="submit" name="action" value="completed" class="btn btn-sm btn-success">Mark Completed</button>
+                                    <input type="number" name="payment_amount" step="0.01" placeholder="Amount (Rs)" required class="form-control form-control-sm d-inline" style="width: 100px;">
+                                    <button type="submit" name="action" value="completed" class="btn btn-sm btn-success">Complete</button>
                                 </form>
                             </div>
                         </td>

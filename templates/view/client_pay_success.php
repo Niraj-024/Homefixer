@@ -12,7 +12,7 @@ if ($payload) {
     if ($decoded && $decoded['status'] === 'COMPLETE') {
         $transaction_id = $decoded['transaction_code'];
         $transaction_uuid = $decoded['transaction_uuid']; // e.g., BOOK1_xxxxxx
-        $amount = floatval($decoded['total_amount']); // convert to float just in case
+        $amount = floatval($decoded['total_amount']); // total paid amount
 
         // Extract booking ID from transaction UUID
         $booking_id_str = explode('_', $transaction_uuid)[0]; // e.g., "BOOK1"
@@ -21,37 +21,12 @@ if ($payload) {
         $payment_status = "paid";
         $payment_method = "eSewa";
         $payment_date = date("Y-m-d H:i:s");
-        $user_id = $_SESSION['id'];
 
-        // Check if payment record already exists
-        $check = $conn->query("SELECT * FROM payment WHERE booking_id = $booking_id");
-
-        if ($check && $check->num_rows > 0) {
-            // Update payment record
-            $update_payment = $conn->query("UPDATE payment 
-                SET payment_method = '$payment_method',
-                    payment_status = '$payment_status',
-                    transaction_id = '$transaction_id',
-                    payment_date = '$payment_date'
-                WHERE booking_id = $booking_id");
-
-            if (!$update_payment) {
-                echo "Payment update failed: " . $conn->error;
-            }
-        } else {
-            // Insert payment record (fallback)
-            $insert_payment = $conn->query("INSERT INTO payment 
-                (booking_id, user_id, amount, payment_method, payment_status, transaction_id, payment_date)
-                VALUES ($booking_id, $user_id, $amount, '$payment_method', '$payment_status', '$transaction_id', '$payment_date')");
-
-            if (!$insert_payment) {
-                echo "Payment insert failed: " . $conn->error;
-            }
-        }
-
-        // Update bookings table payment status and updated_at
+        // Update bookings table: status = paid, save amount and transaction_id
         $update_booking = $conn->query("UPDATE bookings 
-            SET payment_status = '$payment_status',
+            SET status = '$payment_status', 
+                payment_amount = '$amount', 
+                transaction_id = '$transaction_id', 
                 updated_at = '$payment_date'
             WHERE booking_id = $booking_id");
 
@@ -68,27 +43,10 @@ if ($payload) {
     <meta charset="UTF-8">
     <title>Payment Success</title>
     <style>
-        body {
-            text-align: center;
-            font-family: Arial, sans-serif;
-            background-color: #f2f2f2;
-        }
-        .container {
-            max-width: 600px;
-            margin: 60px auto;
-            padding: 20px;
-            background-color: #ffffff;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        .container a, span {
-            text-decoration: none;
-            font-weight: 500;
-            color: blue;
-        }
-        h1 {
-            color: #00aa00;
-        }
+        body { text-align:center; font-family:Arial,sans-serif; background:#f2f2f2; }
+        .container { max-width:600px; margin:60px auto; padding:20px; background:#fff; border-radius:8px; box-shadow:0 0 10px rgba(0,0,0,0.1);}
+        .container a, span { text-decoration:none; font-weight:500; color:blue; }
+        h1 { color:#00aa00; }
     </style>
 </head>
 <body>
@@ -96,7 +54,7 @@ if ($payload) {
         <h1>Payment Successful!</h1>
         <p>Your payment has been received successfully.</p>
         <p><strong>Transaction ID:</strong> <span><?php echo isset($transaction_id) ? htmlspecialchars($transaction_id) : 'Unknown'; ?></span></p>
-        <a href="client_book_current.php">Click to go back to Homepage</a>
+        <a href="client_book_history.php">Go to Booking History</a>
     </div>
 </body>
 </html>

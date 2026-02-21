@@ -7,15 +7,16 @@ if ($_SESSION['role'] != 'admin' && $_SESSION['role'] != 'client'):
     
     $id = $_SESSION['id']; // provider's ID
 
-    // SQL query to fetch completed or cancelled bookings for the specific provider
+    // Fetch completed, paid, cancelled, or reviewed bookings for this provider
     $sql_history = "SELECT b.*, u.uname, 
                         (SELECT GROUP_CONCAT(bi.image_path) 
                          FROM booking_images bi 
                          WHERE bi.booking_id = b.booking_id) AS images
                    FROM bookings b
                    JOIN user u ON b.user_id = u.u_id
-                   WHERE b.provider_id = '$id' AND (b.status = 'completed' OR b.status = 'cancelled' OR b.status = 'reviewed')
-                   ORDER BY b.booking_id DESC;"; // Fetch history in descending order of booking ID
+                   WHERE b.provider_id = '$id' AND 
+                         (b.status = 'completed' OR b.status = 'paid' OR b.status = 'cancelled' OR b.status = 'reviewed')
+                   ORDER BY b.booking_id DESC;"; // Fetch history in descending order
     $result_history = $conn->query($sql_history);
 
     if (!$result_history) {
@@ -52,19 +53,27 @@ if ($_SESSION['role'] != 'admin' && $_SESSION['role'] != 'client'):
             $sn = 0;
             if ($result_history->num_rows > 0) {
                 while ($row = $result_history->fetch_assoc()) {
+                    $sn++;
+                    // Determine badge class and text
                     if ($row['status'] == 'completed') {
                         $status_text = 'Completed';
                         $badge_class = 'bg-success';
-                    } elseif($row['status']=='cancelled') {
+                    } elseif ($row['status'] == 'paid') {
+                        $status_text = 'Paid';
+                        $badge_class = 'bg-info text-dark';
+                    } elseif ($row['status'] == 'reviewed') {
+                        $status_text = 'Reviewed';
+                        $badge_class = 'bg-primary';
+                    } elseif ($row['status'] == 'cancelled') {
                         $status_text = 'Cancelled';
                         $badge_class = 'bg-secondary text-dark';
-                    } else{
-                        $status_text = 'Reviewed';
-                        $badge_class = 'bg-primary ';
+                    } else {
+                        $status_text = ucfirst($row['status']);
+                        $badge_class = 'bg-warning';
                     }
             ?>
                     <tr>
-                        <td><?php echo ++$sn; ?></td>
+                        <td><?php echo $sn; ?></td>
                         <td><?php echo htmlspecialchars($row['uname']); ?></td>
                         <td><?php echo htmlspecialchars($row['service_type']); ?></td>
                         <td><?php echo date('d M Y, h:i A', strtotime($row['booking_date'])); ?></td>
@@ -74,7 +83,7 @@ if ($_SESSION['role'] != 'admin' && $_SESSION['role'] != 'client'):
             <?php
                 }
             } else {
-                echo "<tr><td colspan='6'>No completed or cancelled requests found.</td></tr>";
+                echo "<tr><td colspan='6'>No completed, paid, or cancelled requests found.</td></tr>";
             }
             ?>
         </tbody>

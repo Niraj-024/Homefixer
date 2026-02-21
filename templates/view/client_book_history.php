@@ -1,18 +1,20 @@
-<?php 
-include ('../controller/session.php');
+<?php
+include('../controller/session.php');
 include('../controller/db_conn.php');
-if($_SESSION['role'] != 'admin' && $_SESSION['role'] != 'spr'):
+
+if ($_SESSION['role'] != 'admin' && $_SESSION['role'] != 'spr'):
     include('client_header.php');
     $id = $_SESSION['id'];
 
-    $sql ="SELECT b.*, u.uname 
-    FROM bookings b
-    LEFT JOIN user u ON b.provider_id = u.u_id
-    WHERE b.user_id = '$id' AND (b.status = 'completed' OR b.status = 'cancelled' OR b.status = 'reviewed')
-    ORDER BY b.booking_date DESC;";
-    
+    // Fetch bookings for this client
+    $sql = "SELECT b.*, u.uname 
+            FROM bookings b
+            LEFT JOIN user u ON b.provider_id = u.u_id
+            WHERE b.user_id = '$id' 
+              AND (b.status IN ('completed','cancelled','reviewed','paid'))
+            ORDER BY b.booking_date DESC;";
     $result = $conn->query($sql);
-?> 
+?>
 <div class="container mt-3">
     <ul class="nav nav-pills">
         <li class="nav-item">
@@ -38,31 +40,49 @@ if($_SESSION['role'] != 'admin' && $_SESSION['role'] != 'spr'):
                 <th>Location</th>
                 <th>Provider</th>
                 <th>Status</th>
+                <th>Amount Paid</th>
                 <th>Action</th>
             </tr>
         </thead>
         <tbody>
 <?php 
-    if ($result->num_rows > 0) {
-        $sn = 0;
-        while ($row = $result->fetch_assoc()) {
-            $sn++;
-    ?>
+if ($result->num_rows > 0) {
+    $sn = 0;
+    while ($row = $result->fetch_assoc()) {
+        $sn++;
+?>
     <tr>
         <td><?php echo $sn; ?></td>
-        <td><?php echo $row['service_type']; ?></td>
-        <td><?php echo $row['booking_date']; ?></td>
-        <td><?php echo $row['service_location']; ?></td>
-        <td><?php echo $row['uname'] ? $row['uname'] : 'N/A'; ?></td>
+        <td><?php echo htmlspecialchars($row['service_type']); ?></td>
+        <td><?php echo htmlspecialchars($row['booking_date']); ?></td>
+        <td><?php echo htmlspecialchars($row['service_location']); ?></td>
+        <td><?php echo $row['uname'] ? htmlspecialchars($row['uname']) : 'N/A'; ?></td>
         <td>
             <?php 
-                if ($row['status'] == 'completed') {
-                    echo "<span class='badge bg-success'>Completed</span>";
+                switch ($row['status']) {
+                    case 'completed':
+                        echo "<span class='badge bg-warning text-dark'>Completed</span>";
+                        break;
+                    case 'paid':
+                        echo "<span class='badge bg-success'>Paid</span>";
+                        break;
+                    case 'reviewed':
+                        echo "<span class='badge bg-success'>Reviewed</span>";
+                        break;
+                    case 'cancelled':
+                        echo "<span class='badge bg-danger'>Cancelled</span>";
+                        break;
                 }
-                elseif ($row['status'] == 'reviewed') {
-                    echo "<span class='badge bg-success'>Reviewed</span>";
-                } elseif ($row['status'] == 'cancelled') {
-                    echo "<span class='badge bg-danger'>Cancelled</span>";
+            ?>
+        </td>
+        <td>
+            <?php 
+                if ($row['status'] == 'paid' || $row['status'] == 'reviewed') {
+                    echo "Rs " . number_format($row['payment_amount'], 2);
+                } elseif ($row['status'] == 'completed') {
+                    echo "Rs " . number_format($row['payment_amount'], 2) . " (Pending)";
+                } else {
+                    echo "-";
                 }
             ?>
         </td>
@@ -70,25 +90,25 @@ if($_SESSION['role'] != 'admin' && $_SESSION['role'] != 'spr'):
             <?php 
                 if ($row['status'] == 'completed') {
                     $bookingId = $row['booking_id'];
-                    $serviceType = urlencode($row['service_type']);
-                    $providerName = urlencode($row['uname']);
-                    echo "<a href='client_reviews.php?bid={$bookingId}&service_type={$serviceType}&provider_name={$providerName}' class='btn btn-sm btn-primary'>Leave a Review</a>";
-                } 
+                    echo "<a href='client_book_pay.php?booking_id={$bookingId}' class='btn btn-sm btn-primary'>Pay Now</a>";
+                } elseif ($row['status'] == 'paid') {
+                    $bookingId = $row['booking_id'];
+                    echo "<a href='client_reviews.php?bid={$bookingId}&service_type=" . urlencode($row['service_type']) . "&provider_name=" . urlencode($row['uname']) . "' class='btn btn-sm btn-primary'>Leave Review</a>";
+                } else {
+                    echo "-";
+                }
             ?>
         </td>
-
     </tr>
-    <?php
-        }
-    } else {
-        echo "<tr><td colspan='7'>No history available</td></tr>";
+<?php
     }
+} else {
+    echo "<tr><td colspan='8'>No history available</td></tr>";
+}
 ?>
-</tbody>
-
+        </tbody>
     </table>
 </div>
-
 
 <?php include('client_footer.php'); ?>
 
@@ -97,4 +117,5 @@ elseif($_SESSION['role'] == 'spr'):
     header("location: spr_profile.php");
 elseif($_SESSION['role'] == 'admin'):
     header("location: admin.php");
-endif; ?>
+endif; 
+?>
