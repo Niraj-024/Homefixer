@@ -44,7 +44,7 @@ if($_SESSION['role'] != 'client' && $_SESSION['role'] != 'spr'):
                     <td><?php echo $row['email']; ?></td>
                     <td><?php echo $row['address']; ?></td>
                     <td><?php echo $row['created']; ?></td>
-                    <td><?php echo $row['isactive']; ?></td>
+                    <td><?php echo $row['is_active']; ?></td>
                     <td class="d-flex justify-content-around">
                         <a href="admin_update.php?name=<?php echo $row['uname'];?>&role=client" class="btn btn-primary">Update</a>
                         <button type="button" value="<?php echo $row['uname']; ?>" class="btn btn-danger delete-btn">Delete</button>

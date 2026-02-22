@@ -1,97 +1,101 @@
 <?php
+include('../controller/db_conn.php');
+
+// -------------------------- FOR USER INSERT
 if(isset($_POST['adminadd'])){
-    include('../controller/db_conn.php');
     $name = $_POST['uname'];
     $dob = $_POST['dob'];
     $phone = $_POST['phone'];
     $addr = $_POST['addr'];
     $email = $_POST['email'];
     $passw = $_POST['passw'];
-    $role = $_POST['role']; //make sure to empty all these after submit
+    $role = $_POST['role'];
 
-    if($name==''|| $dob==''|| $phone==''|| $addr==''|| $email=='' || $passw=='' || $role==''|| 
-    empty($name) ||empty($dob) ||empty($phone) ||empty($addr) ||empty($email) ||empty($passw) ||empty($role)){
+    if($name=='' || $dob=='' || $phone=='' || $addr=='' || $email=='' || $passw=='' || $role==''){
         if(isset($_GET['id'])){
             $id = $_GET['id'];
-            if($id == "admin"){
-                header('location: admin.php?message=***Fill all fields***');
-            }
-            if($id == "client"){
-                header('location: admin_client.php?message=***Fill all fields***');
-            }
-            if($id == "spr"){
-                header('location: admin_spr.php?message=***Fill all fields***');
-            }
+            $redirect = [
+                'admin' => 'admin.php',
+                'client' => 'admin_client.php',
+                'spr' => 'admin_spr.php'
+            ];
+            header('location: '.$redirect[$id].'?message=***Fill all fields***');
+            exit();
         }
-    }
-    else{
-    $query = " INSERT INTO user (uname ,email ,password, phone, role, address, dob)
-    VALUES ('$name', '$email', '$passw','$phone','$role', '$addr', '$dob');" ;
-    if($conn->query($query) === TRUE){
-        $name = $addr = $dob = $email = $passw = $role = $phone ="";
-        if(isset($_GET['id'])){
-            $id = $_GET['id'];
-            if($id == "admin"){
-                header('location: admin.php?inserted=***User created successfully***');
+    } else {
+        $query = "INSERT INTO user (uname, email, password, phone, role, address, dob)
+                  VALUES ('$name', '$email', '$passw', '$phone', '$role', '$addr', '$dob')";
+        if($conn->query($query) === TRUE){
+            $name = $addr = $dob = $email = $passw = $role = $phone ="";
+            if(isset($_GET['id'])){
+                $id = $_GET['id'];
+                $redirect = [
+                    'admin' => 'admin.php',
+                    'client' => 'admin_client.php',
+                    'spr' => 'admin_spr.php'
+                ];
+                header('location: '.$redirect[$id].'?inserted=***User created successfully***');
+                exit();
             }
-            if($id == "client"){
-                header('location: admin_client.php?inserted=***User created successfully***');
-            }
-            if($id == "spr"){
-                header('location: admin_spr.php?inserted=***User created successfully***');
-            }
+        } else {
+            die("Couldn't insert user: ".$conn->error);
         }
-    }else{
-        die("Couldn't insert data  $query ". $conn->error);
-    }
     }
 }
 
-//--------------------------for service
-
+// -------------------------- FOR SERVICE INSERT
 if(isset($_POST['serviceadd'])){
-    include('../controller/db_conn.php');
+    $name = trim($_POST['sname']);
+    $description = trim($_POST['description']);
+    $season = !empty($_POST['season']) ? $_POST['season'] : 'all';
 
-    $name =  $_POST['sname'];
-    $caption = $_POST['caption'];
+    if($name == '' || $description == ''){
+        header('location:admin_service.php?err=***Fill all fields***');
+        exit();
+    }
 
-    $allowedtypes = array('jpg', 'jpeg', 'png', 'gif'); // Allowed file types
-    $maxsize = 2 * 1024 * 1024; // Maximum file size in bytes (2MB)
-    $serviceDir = 'C:/xampp/htdocs/1HF/serviceimg/'; //for service
+    $allowedtypes = ['jpg','jpeg','png','gif'];
+    $maxsize = 2 * 1024 * 1024; // 2MB
+    $serviceDir = 'C:/xampp/htdocs/1HF/serviceimg/';
 
-    
-    if(!empty($_FILES['file']['name'])){
-        $iname = $_FILES['file']['name'];
-        $tempname =  $_FILES['file']['tmp_name'];
-        $filesize = $_FILES['file']['size'];
-        $filetype = strtolower(pathinfo($iname, PATHINFO_EXTENSION));
+    if(empty($_FILES['file']['name'])){
+        header('location:admin_service.php?err=***Select an image***');
+        exit();
+    }
 
-        if(in_array($filetype , $allowedtypes)){
-            if($filesize <= $maxsize){
-                if(!file_exists($serviceDir . $iname)){
-                    move_uploaded_file($tempname , $serviceDir.$iname);
+    $iname = $_FILES['file']['name'];
+    $tempname = $_FILES['file']['tmp_name'];
+    $filesize = $_FILES['file']['size'];
+    $filetype = strtolower(pathinfo($iname, PATHINFO_EXTENSION));
 
-                    $query = "INSERT into service (s_name, caption, image) values ('$name', '$caption', '$iname' )";
-                    $result = mysqli_query($conn, $query);
-                    if(!$result){
-                        die('Failed Query'.$conn->error);
-                    }else{
-                        header('location:admin_service.php?inserted=***Service Inserted***');
-                        exit();
-                    }
+    if(!in_array($filetype, $allowedtypes)){
+        header('location:admin_service.php?err=***Invalid file type***');
+        exit();
+    }
 
-                }else{
-                    header('location:admin_service.php?err=***File already exists***');exit();
-                }
-            }else{
-                header('location:admin_service.php?err=***File size exceeds 2mb ***');exit();
-            }
-        }else{
-            header('location:admin_service.php?err=***Invalid file type***');exit();
-        }
+    if($filesize > $maxsize){
+        header('location:admin_service.php?err=***File size exceeds 2MB***');
+        exit();
+    }
 
-        
-    } 
+    if(file_exists($serviceDir . $iname)){
+        header('location:admin_service.php?err=***File already exists***');
+        exit();
+    }
+
+    if(!move_uploaded_file($tempname, $serviceDir . $iname)){
+        die('Failed to move uploaded file.');
+    }
+
+    $query = "INSERT INTO service (s_name, description, image, season)
+              VALUES ('$name', '$description', '$iname', '$season')";
+
+    $result = mysqli_query($conn, $query);
+    if(!$result){
+        die('Failed Query: '.mysqli_error($conn).' | Query: '.$query);
+    } else {
+        header('location:admin_service.php?inserted=***Service Inserted***');
+        exit();
+    }
 }
-
 ?>
